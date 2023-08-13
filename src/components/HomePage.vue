@@ -2,7 +2,7 @@
   <div class="title">Maze Solver</div>
   <div
     class="graphics"
-    :style="{ width: `${vs.width}px`, height: `${vs.width}px` }"
+    :style="{ width: `${vs.width}px`, height: `${vs.height}px` }"
   >
     <div ref="maze" class="mazeGraphics"></div>
   </div>
@@ -10,21 +10,20 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Graphics from "./graphics";
-import * as PIXI from "pixi.js";
-
-interface ViewSettings {
-  height: number;
-  width: number;
-}
+import { ViewSettings, Graphics, Point, Line } from "./Graphics";
 
 export default defineComponent({
   name: "HomePage",
   data() {
     return {
-      vs: { height: 800, width: 600 } as ViewSettings,
-      app: null as PIXI.Application | null,
-      root: null as PIXI.Container | null,
+      vs: {
+        height: 600,
+        width: 800,
+        lineWidth: 2,
+        lineColor: 0x000000,
+        backgroundColor: 0xffffff,
+      } as ViewSettings,
+      graphics: null as Graphics | null,
     };
   },
   mounted() {
@@ -33,16 +32,12 @@ export default defineComponent({
   methods: {
     draw() {
       const element = this.$refs.maze as Element;
-      if (!this.app) {
-        const [app, root] = Graphics.createPIXI(
-          element.clientWidth,
-          element.clientHeight,
-          0xffffff
-        );
-        this.app = app;
-        this.root = root;
-        element.appendChild(this.app.view);
+      if (!this.graphics) {
+        this.graphics = new Graphics(this.vs);
+        element.appendChild(this.graphics.application.view);
       }
+
+      this.graphics.drawLine(new Line(new Point(50, 50), new Point(400, 400)));
     },
   },
 });
