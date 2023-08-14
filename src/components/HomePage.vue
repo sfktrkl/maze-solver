@@ -12,7 +12,7 @@
 import { defineComponent } from "vue";
 
 import { ViewSettings, Graphics } from "./Graphics";
-import { Cell } from "./Cell";
+import { Maze } from "./Maze";
 
 export default defineComponent({
   name: "HomePage",
@@ -41,26 +41,8 @@ export default defineComponent({
         element.appendChild(this.graphics.application.view);
       }
 
-      const c1 = new Cell(50, 50, 100, 100, this.graphics as Graphics);
-      c1.hasRightWall = false;
-      c1.draw();
-
-      const c2 = new Cell(100, 50, 150, 100, this.graphics as Graphics);
-      c2.hasLeftWall = false;
-      c2.hasBottomWall = false;
-      c2.draw();
-      c1.drawMove(c2);
-
-      const c3 = new Cell(100, 100, 150, 150, this.graphics as Graphics);
-      c3.hasTopWall = false;
-      c3.hasRightWall = false;
-      c3.draw();
-      c2.drawMove(c3);
-
-      const c4 = new Cell(150, 100, 200, 150, this.graphics as Graphics);
-      c4.hasLeftWall = false;
-      c4.draw();
-      c3.drawMove(c4, true);
+      let maze = new Maze(12, 16, this.vs, this.graphics as Graphics);
+      maze.animate();
     },
   },
 });
