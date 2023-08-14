@@ -41,21 +41,26 @@ export default defineComponent({
         element.appendChild(this.graphics.application.view);
       }
 
-      const c1 = new Cell(this.graphics as Graphics);
-      c1.hasLeftWall = false;
-      c1.draw(50, 50, 100, 100);
+      const c1 = new Cell(50, 50, 100, 100, this.graphics as Graphics);
+      c1.hasRightWall = false;
+      c1.draw();
 
-      const c2 = new Cell(this.graphics as Graphics);
-      c2.hasRightWall = false;
-      c2.draw(125, 125, 200, 200);
+      const c2 = new Cell(100, 50, 150, 100, this.graphics as Graphics);
+      c2.hasLeftWall = false;
+      c2.hasBottomWall = false;
+      c2.draw();
+      c1.drawMove(c2);
 
-      const c3 = new Cell(this.graphics as Graphics);
-      c3.hasBottomWall = false;
-      c3.draw(225, 225, 250, 250);
+      const c3 = new Cell(100, 100, 150, 150, this.graphics as Graphics);
+      c3.hasTopWall = false;
+      c3.hasRightWall = false;
+      c3.draw();
+      c2.drawMove(c3);
 
-      const c4 = new Cell(this.graphics as Graphics);
-      c4.hasTopWall = false;
-      c4.draw(300, 300, 500, 500);
+      const c4 = new Cell(150, 100, 200, 150, this.graphics as Graphics);
+      c4.hasLeftWall = false;
+      c4.draw();
+      c3.drawMove(c4, true);
     },
   },
 });
