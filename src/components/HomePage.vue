@@ -32,7 +32,7 @@ export default defineComponent({
     this.draw();
   },
   methods: {
-    draw() {
+    async draw() {
       const element = this.$refs.maze as Element;
       if (!element) return;
 
@@ -42,7 +42,8 @@ export default defineComponent({
       }
 
       let maze = new Maze(12, 16, this.vs, this.graphics as Graphics);
-      maze.animate();
+      await maze.generateCells();
+      await maze.breakEntranceAndExit();
     },
   },
 });
@@ -57,8 +58,6 @@ export default defineComponent({
 }
 
 .graphics {
-  border: 2px solid green;
-  background-color: green;
   margin: auto;
 }
 
