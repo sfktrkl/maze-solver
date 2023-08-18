@@ -42,3 +42,22 @@ impl MazeSolver {
         cells
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_maze_create_cells() {
+        let m1 = MazeSolver::new(10, 10, 12, 10);
+        assert_eq!(m1.cells.len(), 12);
+        assert_eq!(m1.cells[0].len(), 10);
+    }
+
+    #[test]
+    fn test_maze_create_cells_large() {
+        let m1 = MazeSolver::new(10, 10, 16, 12);
+        assert_eq!(m1.cells.len(), 16);
+        assert_eq!(m1.cells[0].len(), 12);
+    }
+}
