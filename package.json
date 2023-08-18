@@ -5,10 +5,13 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "wasm": "wasm-pack build src/maze-solver"
   },
   "dependencies": {
+    "@wasm-tool/wasm-pack-plugin": "^1.7.0",
     "core-js": "^3.8.3",
+    "text-encoding": "^0.7.0",
     "vue": "^3.2.13",
     "vue-pixi-wrapper": "^2.3.5"
   },
@@ -43,6 +46,9 @@
     },
     "rules": {}
   },
+  "eslintIgnore": [
+    "src/maze-solver/*"
+  ],
   "browserslist": [
     "> 1%",
     "last 2 versions",
