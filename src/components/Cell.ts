@@ -34,7 +34,7 @@ export class Cell {
     return this.visited;
   }
 
-  draw(): void {
+  async draw(): Promise<void> {
     if (!this.graphics) return;
     const originalColor = this.graphics.viewSettings.lineColor;
 
@@ -64,6 +64,7 @@ export class Cell {
     this.graphics.drawLine(line);
 
     this.graphics.viewSettings.lineColor = originalColor;
+    return new Promise((resolve) => setTimeout(resolve, 10));
   }
 
   drawMove(to: Cell, undo = false): void {

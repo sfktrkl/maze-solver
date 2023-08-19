@@ -25,7 +25,7 @@ extern "C" {
     pub fn get_visited(this: &Cell) -> bool;
 
     #[wasm_bindgen(method)]
-    pub fn draw(this: &Cell);
+    pub async fn draw(this: &Cell);
 }
 
 #[wasm_bindgen]
@@ -54,10 +54,10 @@ impl MazeSolver {
     }
 
     #[wasm_bindgen]
-    pub fn break_entrance_and_exit(&mut self) {
+    pub async fn break_entrance_and_exit(&mut self) {
         if let Some(cell) = self.cells_js[0][0].as_mut() {
             cell.set_top_wall(false);
-            cell.draw();
+            cell.draw().await;
         }
 
         let last_row = self.cells_js.len() - 1;
@@ -65,13 +65,13 @@ impl MazeSolver {
 
         if let Some(cell) = self.cells_js[last_row][last_col].as_mut() {
             cell.set_bottom_wall(false);
-            cell.draw();
+            cell.draw().await;
         }
     }
 
     #[wasm_bindgen]
-    pub fn break_walls(&mut self) {
-        self.break_walls_recursive(0, 0);
+    pub async fn break_walls(&mut self) {
+        self.break_walls_iterative(0, 0).await;
     }
 
     #[wasm_bindgen]
@@ -87,14 +87,15 @@ impl MazeSolver {
         }
     }
 
-    fn break_walls_recursive(&mut self, i: usize, j: usize) {
-        if let Some(cell) = &self.cells_js[i][j] {
-            cell.set_visited(true);
-            let row_count = self.cells_js.len();
-            let column_count = self.cells_js[0].len();
-            loop {
+    async fn break_walls_iterative(&mut self, start_i: usize, start_j: usize) {
+        let mut stack = vec![(start_i, start_j)];
+        let row_count = self.cells_js.len();
+        let column_count = self.cells_js[0].len();
+        while let Some((i, j)) = stack.pop() {
+            if let Some(cell) = &self.cells_js[i][j] {
+                cell.set_visited(true);
+
                 let mut next_index_list = vec![];
-                // Determine which cell(s) to visit next
                 if i > 0 {
                     if let Some(cell) = &self.cells_js[i - 1][j] {
                         if !cell.get_visited() {
@@ -124,17 +125,13 @@ impl MazeSolver {
                     }
                 }
 
-                // If there is nowhere to go from here, just break out
                 if next_index_list.is_empty() {
-                    if let Some(cell) = &self.cells_js[i][j] {
-                        cell.draw();
-                        return;
-                    }
+                    cell.draw().await;
                 } else {
                     let mut rng = rand::thread_rng();
                     let random_index = rng.gen_range(0..next_index_list.len());
                     let (next_i, next_j) = next_index_list[random_index];
-                    // knock out walls between this cell and the next cell(s)
+
                     if let Some(cell) = &self.cells_js[i][j] {
                         if next_i == i + 1 {
                             cell.set_bottom_wall(false);
@@ -148,10 +145,10 @@ impl MazeSolver {
                                 cell.set_bottom_wall(false);
                             }
                         }
-                        if next_j == j + 1 {
-                            cell.set_right_wall(false);
-                            if let Some(cell) = &self.cells_js[i][next_j] {
-                                cell.set_left_wall(false);
+                        if next_i == i + 1 {
+                            cell.set_bottom_wall(false);
+                            if let Some(cell) = &self.cells_js[next_i][j] {
+                                cell.set_top_wall(false);
                             }
                         }
                         if j > 0 && next_j == j - 1 {
@@ -160,10 +157,16 @@ impl MazeSolver {
                                 cell.set_right_wall(false);
                             }
                         }
+                        if next_j == j + 1 {
+                            cell.set_right_wall(false);
+                            if let Some(cell) = &self.cells_js[i][next_j] {
+                                cell.set_left_wall(false);
+                            }
+                        }
                     }
 
-                    // recursively visit the next cell
-                    self.break_walls_recursive(next_i, next_j);
+                    stack.push((i, j)); // Push current cell back onto the stack
+                    stack.push((next_i, next_j)); // Push next cell onto the stack
                 }
             }
         }

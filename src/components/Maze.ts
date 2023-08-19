@@ -33,11 +33,9 @@ export class Maze {
           this.solver.get_cell(i, j, 3),
           this.graphics
         );
-        cell.draw();
+        await cell.draw();
         cells.push(cell);
         this.solver.set_cell(i, j, cell);
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-        await new Promise((resolve) => setTimeout(resolve, 1));
       }
       this.cells.push(cells);
     }
@@ -45,12 +43,12 @@ export class Maze {
 
   public async breakEntranceAndExit(): Promise<void> {
     if (!this.graphics) return;
-    this.solver.break_entrance_and_exit();
+    await this.solver.break_entrance_and_exit();
   }
 
   public async breakWalls(): Promise<void> {
     if (!this.graphics) return;
-    this.solver.break_walls();
+    await this.solver.break_walls();
   }
 
   public async resetVisited(): Promise<void> {
