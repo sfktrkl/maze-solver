@@ -52,4 +52,9 @@ export class Maze {
     if (!this.graphics) return;
     this.solver.break_walls();
   }
+
+  public async resetVisited(): Promise<void> {
+    if (!this.graphics) return;
+    this.solver.reset_visited();
+  }
 }

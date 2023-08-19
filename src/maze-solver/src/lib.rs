@@ -74,6 +74,19 @@ impl MazeSolver {
         self.break_walls_recursive(0, 0);
     }
 
+    #[wasm_bindgen]
+    pub fn reset_visited(&mut self) {
+        let row_count = self.cells_js.len();
+        let column_count = self.cells_js[0].len();
+        for i in 0..row_count {
+            for j in 0..column_count {
+                if let Some(cell) = &self.cells_js[i][j] {
+                    cell.setVisited(false);
+                }
+            }
+        }
+    }
+
     fn break_walls_recursive(&mut self, i: usize, j: usize) {
         if let Some(cell) = &self.cells_js[i][j] {
             cell.setVisited(true);

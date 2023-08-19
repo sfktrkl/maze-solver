@@ -45,6 +45,7 @@ export default defineComponent({
       await maze.generateCells();
       await maze.breakEntranceAndExit();
       await maze.breakWalls();
+      await maze.resetVisited();
     },
   },
 });
