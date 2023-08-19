@@ -47,4 +47,9 @@ export class Maze {
     if (!this.graphics) return;
     this.solver.break_entrance_and_exit();
   }
+
+  public async breakWalls(): Promise<void> {
+    if (!this.graphics) return;
+    this.solver.break_walls();
+  }
 }

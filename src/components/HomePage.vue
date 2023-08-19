@@ -44,6 +44,7 @@ export default defineComponent({
       let maze = new Maze(12, 16, this.vs, this.graphics as Graphics);
       await maze.generateCells();
       await maze.breakEntranceAndExit();
+      await maze.breakWalls();
     },
   },
 });

@@ -5,6 +5,7 @@ export class Cell {
   private hasRightWall = true;
   private hasTopWall = true;
   private hasBottomWall = true;
+  private visited = false;
 
   constructor(
     private x1: number,
@@ -25,6 +26,12 @@ export class Cell {
   }
   setBottomWall(value: boolean): void {
     this.hasBottomWall = value;
+  }
+  setVisited(value: boolean): void {
+    this.visited = value;
+  }
+  getVisited(): boolean {
+    return this.visited;
   }
 
   draw(): void {

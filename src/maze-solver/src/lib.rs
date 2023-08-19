@@ -1,3 +1,4 @@
+use rand::Rng;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -16,6 +17,12 @@ extern "C" {
 
     #[wasm_bindgen(method)]
     pub fn setBottomWall(this: &Cell, value: bool);
+
+    #[wasm_bindgen(method)]
+    pub fn setVisited(this: &Cell, value: bool);
+
+    #[wasm_bindgen(method)]
+    pub fn getVisited(this: &Cell) -> bool;
 
     #[wasm_bindgen(method)]
     pub fn draw(this: &Cell);
@@ -59,6 +66,93 @@ impl MazeSolver {
         if let Some(cell) = self.cells_js[last_row][last_col].as_mut() {
             cell.setBottomWall(false);
             cell.draw();
+        }
+    }
+
+    #[wasm_bindgen]
+    pub fn break_walls(&mut self) {
+        self.break_walls_recursive(0, 0);
+    }
+
+    fn break_walls_recursive(&mut self, i: usize, j: usize) {
+        if let Some(cell) = &self.cells_js[i][j] {
+            cell.setVisited(true);
+            let row_count = self.cells_js.len();
+            let column_count = self.cells_js[0].len();
+            loop {
+                let mut next_index_list = vec![];
+                // Determine which cell(s) to visit next
+                if i > 0 {
+                    if let Some(cell) = &self.cells_js[i - 1][j] {
+                        if !cell.getVisited() {
+                            next_index_list.push((i - 1, j));
+                        }
+                    }
+                }
+                if i < row_count - 1 {
+                    if let Some(cell) = &self.cells_js[i + 1][j] {
+                        if !cell.getVisited() {
+                            next_index_list.push((i + 1, j));
+                        }
+                    }
+                }
+                if j > 0 {
+                    if let Some(cell) = &self.cells_js[i][j - 1] {
+                        if !cell.getVisited() {
+                            next_index_list.push((i, j - 1));
+                        }
+                    }
+                }
+                if j < column_count - 1 {
+                    if let Some(cell) = &self.cells_js[i][j + 1] {
+                        if !cell.getVisited() {
+                            next_index_list.push((i, j + 1));
+                        }
+                    }
+                }
+
+                // If there is nowhere to go from here, just break out
+                if next_index_list.is_empty() {
+                    if let Some(cell) = &self.cells_js[i][j] {
+                        cell.draw();
+                        return;
+                    }
+                } else {
+                    let mut rng = rand::thread_rng();
+                    let random_index = rng.gen_range(0..next_index_list.len());
+                    let (next_i, next_j) = next_index_list[random_index];
+                    // knock out walls between this cell and the next cell(s)
+                    if let Some(cell) = &self.cells_js[i][j] {
+                        if next_i == i + 1 {
+                            cell.setBottomWall(false);
+                            if let Some(cell) = &self.cells_js[next_i][j] {
+                                cell.setTopWall(false);
+                            }
+                        }
+                        if i > 0 && next_i == i - 1 {
+                            cell.setTopWall(false);
+                            if let Some(cell) = &self.cells_js[next_i][j] {
+                                cell.setBottomWall(false);
+                            }
+                        }
+                        if next_j == j + 1 {
+                            cell.setRightWall(false);
+                            if let Some(cell) = &self.cells_js[i][next_j] {
+                                cell.setLeftWall(false);
+                            }
+                        }
+                        if j > 0 && next_j == j - 1 {
+                            cell.setLeftWall(false);
+                            if let Some(cell) = &self.cells_js[i][next_j] {
+                                cell.setRightWall(false);
+                            }
+                        }
+                    }
+
+                    // recursively visit the next cell
+                    self.break_walls_recursive(next_i, next_j);
+                }
+            }
         }
     }
 
