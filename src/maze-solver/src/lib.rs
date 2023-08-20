@@ -176,39 +176,6 @@ impl MazeSolver {
         false
     }
 
-    /*
-    async fn solve_maze(&mut self, i: usize, j: usize) -> bool {
-        let row_count = self.cells_js.len();
-        let column_count = self.cells_js[0].len();
-
-        if let Some(cell) = &self.cells_js[i][j] {
-            cell.set_visited(true);
-        }
-
-        if i == row_count - 1 && j == column_count - 1 {
-            return true;
-        }
-
-        if let Some(cell) = &self.cells_js[i][j] {
-            if i > 0 && cell.get_top_wall() {
-                if let Some(bottom) = &self.cells_js[i - 1][j] {
-                    if !bottom.get_visited() {
-                        cell.draw_move(bottom, false).await;
-                        let solution = self.solve_maze(i - 1, j).await;
-                        if solution {
-                            return true;
-                        } else {
-                            cell.draw_move(bottom, true);
-                        }
-                    }
-                }
-            }
-        }
-
-        false
-    }
-    */
-
     async fn break_walls_iterative(&mut self, start_i: usize, start_j: usize) {
         let mut stack = vec![(start_i, start_j)];
         let row_count = self.cells_js.len();
@@ -219,29 +186,29 @@ impl MazeSolver {
 
                 let mut next_index_list = vec![];
                 if i > 0 {
-                    if let Some(cell) = &self.cells_js[i - 1][j] {
-                        if !cell.get_visited() {
+                    if let Some(top) = &self.cells_js[i - 1][j] {
+                        if !top.get_visited() {
                             next_index_list.push((i - 1, j));
                         }
                     }
                 }
                 if i < row_count - 1 {
-                    if let Some(cell) = &self.cells_js[i + 1][j] {
-                        if !cell.get_visited() {
+                    if let Some(bottom) = &self.cells_js[i + 1][j] {
+                        if !bottom.get_visited() {
                             next_index_list.push((i + 1, j));
                         }
                     }
                 }
                 if j > 0 {
-                    if let Some(cell) = &self.cells_js[i][j - 1] {
-                        if !cell.get_visited() {
+                    if let Some(left) = &self.cells_js[i][j - 1] {
+                        if !left.get_visited() {
                             next_index_list.push((i, j - 1));
                         }
                     }
                 }
                 if j < column_count - 1 {
-                    if let Some(cell) = &self.cells_js[i][j + 1] {
-                        if !cell.get_visited() {
+                    if let Some(right) = &self.cells_js[i][j + 1] {
+                        if !right.get_visited() {
                             next_index_list.push((i, j + 1));
                         }
                     }
@@ -257,32 +224,32 @@ impl MazeSolver {
                     if let Some(cell) = &self.cells_js[i][j] {
                         if i > 0 && next_i == i - 1 {
                             cell.set_top_wall(false);
-                            if let Some(cell) = &self.cells_js[next_i][j] {
-                                cell.set_bottom_wall(false);
+                            if let Some(top) = &self.cells_js[next_i][j] {
+                                top.set_bottom_wall(false);
                             }
                         }
                         if next_i == i + 1 {
                             cell.set_bottom_wall(false);
-                            if let Some(cell) = &self.cells_js[next_i][j] {
-                                cell.set_top_wall(false);
+                            if let Some(bottom) = &self.cells_js[next_i][j] {
+                                bottom.set_top_wall(false);
                             }
                         }
                         if j > 0 && next_j == j - 1 {
                             cell.set_left_wall(false);
-                            if let Some(cell) = &self.cells_js[i][next_j] {
-                                cell.set_right_wall(false);
+                            if let Some(left) = &self.cells_js[i][next_j] {
+                                left.set_right_wall(false);
                             }
                         }
                         if next_j == j + 1 {
                             cell.set_right_wall(false);
-                            if let Some(cell) = &self.cells_js[i][next_j] {
-                                cell.set_left_wall(false);
+                            if let Some(right) = &self.cells_js[i][next_j] {
+                                right.set_left_wall(false);
                             }
                         }
                     }
 
-                    stack.push((i, j)); // Push current cell back onto the stack
-                    stack.push((next_i, next_j)); // Push next cell onto the stack
+                    stack.push((i, j));
+                    stack.push((next_i, next_j));
                 }
             }
         }
