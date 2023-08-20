@@ -121,54 +121,24 @@ impl MazeSolver {
                     return true;
                 }
 
-                let mut moved = false;
-                if i > 0 && !cell.get_top_wall() {
-                    if let Some(top) = &self.cells_js[i - 1][j] {
-                        if !top.get_visited() {
-                            cell.draw_move(top, false).await;
-                            let mut new_path = path.clone();
-                            new_path.push(&self.cells_js[i][j]);
-                            stack.push((new_path, i - 1, j));
-                            moved = true;
-                        }
-                    }
-                }
-                if i < row_count - 1 && !cell.get_bottom_wall() {
-                    if let Some(bottom) = &self.cells_js[i + 1][j] {
-                        if !bottom.get_visited() {
-                            cell.draw_move(bottom, false).await;
-                            let mut new_path = path.clone();
-                            new_path.push(&self.cells_js[i][j]);
-                            stack.push((new_path, i + 1, j));
-                            moved = true;
-                        }
-                    }
-                }
-                if j > 0 && !cell.get_left_wall() {
-                    if let Some(left) = &self.cells_js[i][j - 1] {
-                        if !left.get_visited() {
-                            cell.draw_move(left, false).await;
-                            let mut new_path = path.clone();
-                            new_path.push(&self.cells_js[i][j]);
-                            stack.push((new_path, i, j - 1));
-                            moved = true;
-                        }
-                    }
-                }
-                if j < column_count - 1 && !cell.get_right_wall() {
-                    if let Some(right) = &self.cells_js[i][j + 1] {
-                        if !right.get_visited() {
-                            cell.draw_move(right, false).await;
-                            let mut new_path = path.clone();
-                            new_path.push(&self.cells_js[i][j]);
-                            stack.push((new_path, i, j + 1));
-                            moved = true;
-                        }
-                    }
-                }
+                let directions = [
+                    (i.wrapping_sub(1), j, cell.get_top_wall()),
+                    (i + 1, j, cell.get_bottom_wall()),
+                    (i, j.wrapping_sub(1), cell.get_left_wall()),
+                    (i, j + 1, cell.get_right_wall()),
+                ];
 
-                if !moved {
-                    cell.set_visited(false);
+                for &(next_i, next_j, wall) in directions.iter() {
+                    if next_i < row_count && next_j < column_count && !wall {
+                        if let Some(next_cell) = &self.cells_js[next_i][next_j] {
+                            if !next_cell.get_visited() {
+                                let mut new_path = path.clone();
+                                new_path.push(&self.cells_js[i][j]);
+                                stack.push((new_path, next_i, next_j));
+                                cell.draw_move(next_cell, false).await;
+                            }
+                        }
+                    }
                 }
             }
         }
