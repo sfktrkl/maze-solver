@@ -18,15 +18,31 @@ export class Cell {
   setLeftWall(value: boolean): void {
     this.hasLeftWall = value;
   }
+  getLeftWall(): boolean {
+    return this.hasLeftWall;
+  }
+
   setRightWall(value: boolean): void {
     this.hasRightWall = value;
   }
+  getRightWall(): boolean {
+    return this.hasRightWall;
+  }
+
   setTopWall(value: boolean): void {
     this.hasTopWall = value;
   }
+  getTopWall(): boolean {
+    return this.hasTopWall;
+  }
+
   setBottomWall(value: boolean): void {
     this.hasBottomWall = value;
   }
+  getBottomWall(): boolean {
+    return this.hasBottomWall;
+  }
+
   setVisited(value: boolean): void {
     this.visited = value;
   }
@@ -67,10 +83,8 @@ export class Cell {
     return new Promise((resolve) => setTimeout(resolve, 10));
   }
 
-  drawMove(to: Cell, undo = false): void {
+  async drawMove(to: Cell, undo: boolean): Promise<void> {
     if (!this.graphics) return;
-    if (!this.x1 || !this.y1 || !this.x2 || !this.y2) return;
-    if (!to.x1 || !to.y1 || !to.x2 || !to.y2) return;
 
     const xMid = (this.x1 + this.x2) / 2;
     const yMid = (this.y1 + this.y2) / 2;
@@ -78,8 +92,8 @@ export class Cell {
     const toYMid = (to.y1 + to.y2) / 2;
 
     const originalColor = this.graphics.viewSettings.lineColor;
-    this.graphics.viewSettings.lineColor = 0xff0000; // red
-    if (undo) this.graphics.viewSettings.lineColor = 0x808080; // gray
+    this.graphics.viewSettings.lineColor = 0x0000ff; // blue
+    if (undo) this.graphics.viewSettings.lineColor = 0x00ff00; // green
 
     let line: Line | null = null;
     let line2: Line | null = null;
@@ -99,5 +113,6 @@ export class Cell {
     if (line) this.graphics.drawLine(line);
     if (line2) this.graphics.drawLine(line2);
     this.graphics.viewSettings.lineColor = originalColor;
+    return new Promise((resolve) => setTimeout(resolve, 50));
   }
 }

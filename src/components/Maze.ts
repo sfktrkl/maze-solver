@@ -55,4 +55,9 @@ export class Maze {
     if (!this.graphics) return;
     this.solver.reset_visited();
   }
+
+  public async solve(): Promise<void> {
+    if (!this.graphics) return;
+    await this.solver.solve();
+  }
 }
