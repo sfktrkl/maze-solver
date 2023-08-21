@@ -157,8 +157,8 @@ impl MazeSolver {
 
                 let directions = [
                     (i.wrapping_sub(1), j, cell.get_top_wall()),
-                    (i + 1, j, cell.get_bottom_wall()),
                     (i, j.wrapping_sub(1), cell.get_left_wall()),
+                    (i + 1, j, cell.get_bottom_wall()),
                     (i, j + 1, cell.get_right_wall()),
                 ];
 
