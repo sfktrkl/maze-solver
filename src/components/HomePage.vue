@@ -54,7 +54,7 @@
             />
           </div>
         </div>
-        <div class="col-auto my-1">
+        <div class="col text-center my-2">
           <button type="submit" class="btn btn-primary">
             {{ drawing ? "Click to Finish" : "Create New Maze" }}
           </button>
