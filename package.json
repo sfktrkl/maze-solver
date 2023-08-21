@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",
+    "bootstrap": "^5.3.1",
+    "bootstrap-vue": "^2.23.1",
     "core-js": "^3.8.3",
     "text-encoding": "^0.7.0",
-    "vue": "^3.2.13",
+    "vue": "^3.3.4",
     "vue-pixi-wrapper": "^2.3.5"
   },
   "devDependencies": {

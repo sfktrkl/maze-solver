@@ -57,6 +57,12 @@ export class Graphics {
     this.app.stage.addChild(this.root);
   }
 
+  clear(): void {
+    this.app.stage.removeChild(this.root);
+    this.root = new PIXI.Container();
+    this.app.stage.addChild(this.root);
+  }
+
   drawLine(line: Line): void {
     line.draw(this.vs, this.root);
   }
