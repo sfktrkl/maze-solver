@@ -73,17 +73,20 @@ import { Maze } from "./Maze";
 export default defineComponent({
   name: "HomePage",
   data() {
-    return {
-      vs: {
-        height: 600,
-        width: 800,
-        lineWidth: 2,
-        lineColor: 0x000000,
-        backgroundColor: 0xffffff,
-      } as ViewSettings,
+    const vs = {
+      height: 600,
+      width: 800,
+      lineWidth: 2,
+      lineColor: 0x000000,
+      backgroundColor: 0xffffff,
+    } as ViewSettings;
+    const graphics = new Graphics(vs);
+    const animation = new AnimationSettings();
 
-      animation: new AnimationSettings() as AnimationSettings,
-      graphics: null as Graphics | null,
+    return {
+      vs,
+      graphics,
+      animation,
 
       drawing: false as boolean,
       quick: null as [boolean, boolean] | null,
@@ -96,19 +99,12 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.initializeGraphics();
+    const element = this.$refs.maze as Element;
+    element.appendChild(this.graphics.application.view);
+
     this.generateAndSolveMaze();
   },
   methods: {
-    initializeGraphics() {
-      const element = this.$refs.maze as Element;
-      if (!element) return;
-
-      if (!this.graphics) {
-        this.graphics = new Graphics(this.vs);
-        element.appendChild(this.graphics.application.view);
-      }
-    },
     clearGraphics() {
       if (this.graphics) {
         this.graphics.clear();
