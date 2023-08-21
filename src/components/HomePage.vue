@@ -105,11 +105,6 @@ export default defineComponent({
     this.generateAndSolveMaze();
   },
   methods: {
-    clearGraphics() {
-      if (this.graphics) {
-        this.graphics.clear();
-      }
-    },
     async generateAndSolveMaze() {
       if (this.drawing) {
         this.quick = [
@@ -120,7 +115,7 @@ export default defineComponent({
         this.animation.solverAnimation = false;
       } else {
         this.drawing = true;
-        this.clearGraphics();
+        this.graphics.clear();
 
         let maze = new Maze(
           this.rowCount,
