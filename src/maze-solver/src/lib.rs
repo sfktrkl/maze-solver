@@ -6,10 +6,10 @@ extern "C" {
     #[derive(Clone)]
     pub type AnimationSettings;
 
-    #[wasm_bindgen(method, js_name = getMazeAnimation)]
+    #[wasm_bindgen(method, getter = mazeAnimation)]
     pub fn get_maze_animation(this: &AnimationSettings) -> bool;
 
-    #[wasm_bindgen(method, js_name = getSolverAnimation)]
+    #[wasm_bindgen(method, getter = solverAnimation)]
     pub fn get_solver_animation(this: &AnimationSettings) -> bool;
 }
 
@@ -18,29 +18,29 @@ extern "C" {
     #[derive(Clone)]
     pub type Cell;
 
-    #[wasm_bindgen(method, js_name = setLeftWall)]
+    #[wasm_bindgen(method, setter = leftWall)]
     pub fn set_left_wall(this: &Cell, value: bool);
-    #[wasm_bindgen(method, js_name = getLeftWall)]
+    #[wasm_bindgen(method, getter = leftWall)]
     pub fn get_left_wall(this: &Cell) -> bool;
 
-    #[wasm_bindgen(method, js_name = setRightWall)]
+    #[wasm_bindgen(method, setter = rightWall)]
     pub fn set_right_wall(this: &Cell, value: bool);
-    #[wasm_bindgen(method, js_name = getRightWall)]
+    #[wasm_bindgen(method, getter = rightWall)]
     pub fn get_right_wall(this: &Cell) -> bool;
 
-    #[wasm_bindgen(method, js_name = setTopWall)]
+    #[wasm_bindgen(method, setter = topWall)]
     pub fn set_top_wall(this: &Cell, value: bool);
-    #[wasm_bindgen(method, js_name = getTopWall)]
+    #[wasm_bindgen(method, getter = topWall)]
     pub fn get_top_wall(this: &Cell) -> bool;
 
-    #[wasm_bindgen(method, js_name = setBottomWall)]
+    #[wasm_bindgen(method, setter = bottomWall)]
     pub fn set_bottom_wall(this: &Cell, value: bool);
-    #[wasm_bindgen(method, js_name = getBottomWall)]
+    #[wasm_bindgen(method, getter = bottomWall)]
     pub fn get_bottom_wall(this: &Cell) -> bool;
 
-    #[wasm_bindgen(method, js_name = setVisited)]
+    #[wasm_bindgen(method, setter = visited)]
     pub fn set_visited(this: &Cell, value: bool);
-    #[wasm_bindgen(method, js_name = getVisited)]
+    #[wasm_bindgen(method, getter = visited)]
     pub fn get_visited(this: &Cell) -> bool;
 
     #[wasm_bindgen(method)]

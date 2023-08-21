@@ -16,14 +16,6 @@ export class AnimationSettings {
     this.mazeAnimation = true;
     this.solverAnimation = true;
   }
-
-  getMazeAnimation(): boolean {
-    return this.mazeAnimation;
-  }
-
-  getSolverAnimation(): boolean {
-    return this.solverAnimation;
-  }
 }
 
 export class Point {
