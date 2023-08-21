@@ -1,4 +1,4 @@
-import { Graphics, ViewSettings } from "./Graphics";
+import { Graphics, ViewSettings, AnimationSettings } from "./Graphics";
 import { Cell } from "./Cell";
 
 import { MazeSolver } from "../maze-solver/pkg";
@@ -21,8 +21,9 @@ export class Maze {
     );
   }
 
-  public async generateCells(): Promise<void> {
+  public async generateCells(animation: AnimationSettings): Promise<void> {
     if (!this.graphics) return;
+    this.solver.set_animation_settings(animation);
     for (let i = 0; i < this.rowCount; i++) {
       const cells: Cell[] = [];
       for (let j = 0; j < this.columnCount; j++) {
@@ -33,7 +34,7 @@ export class Maze {
           this.solver.get_cell(i, j, 3),
           this.graphics
         );
-        await cell.draw();
+        await cell.draw(animation.mazeAnimation);
         cells.push(cell);
         this.solver.set_cell(i, j, cell);
       }

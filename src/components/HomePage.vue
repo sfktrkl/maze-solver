@@ -7,15 +7,24 @@
         :style="{ width: `${vs.width}px`, height: `${vs.height}px` }"
       >
         <div ref="maze" class="mazeGraphics"></div>
-        <div class="form-check">
-          <label for="animation">Enable Animation</label>
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="animation"
-            v-model="vs.animate"
-          />
-        </div>
+      </div>
+      <div class="form-check col">
+        <label for="mazeAnimation">Maze Generation Animation</label>
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="mazeAnimation"
+          v-model="animation.mazeAnimation"
+        />
+      </div>
+      <div class="form-check col">
+        <label for="solutionAnimation">Solution Animation</label>
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="solutionAnimation"
+          v-model="animation.solverAnimation"
+        />
       </div>
     </div>
 
@@ -47,7 +56,7 @@
         </div>
         <div class="col-auto my-1">
           <button type="submit" class="btn btn-primary" :disabled="drawing">
-            Update Maze
+            {{ drawing ? "Waiting for solution..." : "Update Maze" }}
           </button>
         </div>
       </form>
@@ -58,7 +67,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-import { ViewSettings, Graphics } from "./Graphics";
+import { ViewSettings, AnimationSettings, Graphics } from "./Graphics";
 import { Maze } from "./Maze";
 
 export default defineComponent({
@@ -68,11 +77,12 @@ export default defineComponent({
       vs: {
         height: 600,
         width: 800,
-        animate: true,
         lineWidth: 2,
         lineColor: 0x000000,
         backgroundColor: 0xffffff,
       } as ViewSettings,
+
+      animation: new AnimationSettings() as AnimationSettings,
       graphics: null as Graphics | null,
 
       drawing: false as boolean,
@@ -111,7 +121,7 @@ export default defineComponent({
         this.vs,
         this.graphics as Graphics
       );
-      await maze.generateCells();
+      await maze.generateCells(this.animation);
       await maze.breakEntranceAndExit();
       await maze.breakWalls();
       await maze.resetVisited();

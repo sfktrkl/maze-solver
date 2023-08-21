@@ -3,10 +3,27 @@ import * as PIXI from "pixi.js";
 export interface ViewSettings {
   width: number;
   height: number;
-  animate: boolean;
   lineWidth: number;
   lineColor: number;
   backgroundColor: number;
+}
+
+export class AnimationSettings {
+  public mazeAnimation: boolean;
+  public solverAnimation: boolean;
+
+  constructor() {
+    this.mazeAnimation = true;
+    this.solverAnimation = true;
+  }
+
+  getMazeAnimation(): boolean {
+    return this.mazeAnimation;
+  }
+
+  getSolverAnimation(): boolean {
+    return this.solverAnimation;
+  }
 }
 
 export class Point {

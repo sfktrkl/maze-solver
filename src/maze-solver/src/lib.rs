@@ -4,6 +4,18 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
     #[derive(Clone)]
+    pub type AnimationSettings;
+
+    #[wasm_bindgen(method, js_name = getMazeAnimation)]
+    pub fn get_maze_animation(this: &AnimationSettings) -> bool;
+
+    #[wasm_bindgen(method, js_name = getSolverAnimation)]
+    pub fn get_solver_animation(this: &AnimationSettings) -> bool;
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[derive(Clone)]
     pub type Cell;
 
     #[wasm_bindgen(method, js_name = setLeftWall)]
@@ -32,16 +44,17 @@ extern "C" {
     pub fn get_visited(this: &Cell) -> bool;
 
     #[wasm_bindgen(method)]
-    pub async fn draw(this: &Cell);
+    pub async fn draw(this: &Cell, animate: bool);
 
     #[wasm_bindgen(method, js_name = drawMove)]
-    pub async fn draw_move(this: &Cell, to: &Cell, undo: bool);
+    pub async fn draw_move(this: &Cell, to: &Cell, undo: bool, animate: bool);
 }
 
 #[wasm_bindgen]
 pub struct MazeSolver {
     cells: Vec<Vec<Vec<f32>>>,
     cells_js: Vec<Vec<Option<Cell>>>,
+    animation_settings: Option<AnimationSettings>,
 }
 
 #[wasm_bindgen]
@@ -50,7 +63,12 @@ impl MazeSolver {
     pub fn new(height: usize, width: usize, row_count: usize, column_count: usize) -> Self {
         let cells = MazeSolver::generate_cells(height, width, row_count, column_count);
         let cells_js = vec![vec![None; column_count]; row_count];
-        MazeSolver { cells, cells_js }
+        MazeSolver { cells, cells_js, animation_settings: None }
+    }
+
+    #[wasm_bindgen]
+    pub fn set_animation_settings(&mut self, animation_settings: AnimationSettings) {
+        self.animation_settings = Some(animation_settings)
     }
 
     #[wasm_bindgen]
@@ -65,17 +83,22 @@ impl MazeSolver {
 
     #[wasm_bindgen]
     pub async fn break_entrance_and_exit(&mut self) {
-        if let Some(cell) = self.cells_js[0][0].as_mut() {
+        let mut animate = true;
+        if let Some(settings) = &self.animation_settings {
+            animate = settings.get_maze_animation();
+        }
+
+        if let Some(cell) = &self.cells_js[0][0] {
             cell.set_top_wall(false);
-            cell.draw().await;
+            cell.draw(animate).await;
         }
 
         let last_row = self.cells_js.len() - 1;
         let last_col = self.cells_js[0].len() - 1;
 
-        if let Some(cell) = self.cells_js[last_row][last_col].as_mut() {
+        if let Some(cell) = &self.cells_js[last_row][last_col] {
             cell.set_bottom_wall(false);
-            cell.draw().await;
+            cell.draw(animate).await;
         }
     }
 
@@ -114,7 +137,11 @@ impl MazeSolver {
                     let mut current = cell;
                     for prev in path.iter().rev() {
                         if let Some(prev_cell) = &prev {
-                            current.draw_move(prev_cell, true).await;
+                            let mut animate = true;
+                            if let Some(settings) = &self.animation_settings {
+                                animate = settings.get_solver_animation();
+                            }
+                            current.draw_move(prev_cell, true, animate).await;
                             current = prev_cell;
                         }
                     }
@@ -135,7 +162,12 @@ impl MazeSolver {
                                 let mut new_path = path.clone();
                                 new_path.push(&self.cells_js[i][j]);
                                 stack.push((new_path, next_i, next_j));
-                                cell.draw_move(next_cell, false).await;
+
+                                let mut animate = true;
+                                if let Some(settings) = &self.animation_settings {
+                                    animate = settings.get_solver_animation();
+                                }
+                                cell.draw_move(next_cell, false, animate).await;
                             }
                         }
                     }
@@ -185,7 +217,11 @@ impl MazeSolver {
                 }
 
                 if next_index_list.is_empty() {
-                    cell.draw().await;
+                    let mut animate = true;
+                    if let Some(settings) = &self.animation_settings {
+                        animate = settings.get_maze_animation();
+                    }
+                    cell.draw(animate).await;
                 } else {
                     let mut rng = rand::thread_rng();
                     let random_index = rng.gen_range(0..next_index_list.len());

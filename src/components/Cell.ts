@@ -50,7 +50,7 @@ export class Cell {
     return this.visited;
   }
 
-  async draw(): Promise<void> {
+  async draw(animate: boolean): Promise<void> {
     if (!this.graphics) return;
     const originalColor = this.graphics.viewSettings.lineColor;
 
@@ -80,11 +80,10 @@ export class Cell {
     this.graphics.drawLine(line);
 
     this.graphics.viewSettings.lineColor = originalColor;
-    if (this.graphics.viewSettings.animate)
-      return new Promise((resolve) => setTimeout(resolve, 10));
+    if (animate) return new Promise((resolve) => setTimeout(resolve, 10));
   }
 
-  async drawMove(to: Cell, undo: boolean): Promise<void> {
+  async drawMove(to: Cell, undo: boolean, animate: boolean): Promise<void> {
     if (!this.graphics) return;
 
     const xMid = (this.x1 + this.x2) / 2;
@@ -114,7 +113,6 @@ export class Cell {
     if (line) this.graphics.drawLine(line);
     if (line2) this.graphics.drawLine(line2);
     this.graphics.viewSettings.lineColor = originalColor;
-    if (this.graphics.viewSettings.animate)
-      return new Promise((resolve) => setTimeout(resolve, 50));
+    if (animate) return new Promise((resolve) => setTimeout(resolve, 50));
   }
 }
