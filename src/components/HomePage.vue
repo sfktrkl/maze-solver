@@ -14,7 +14,7 @@
           class="form-check-input"
           type="checkbox"
           id="mazeAnimation"
-          v-model="animation.mazeAnimation"
+          v-model="mazeAnimation"
         />
       </div>
       <div class="form-check col">
@@ -23,13 +23,13 @@
           class="form-check-input"
           type="checkbox"
           id="solutionAnimation"
-          v-model="animation.solverAnimation"
+          v-model="solverAnimation"
         />
       </div>
     </div>
 
     <div class="wrapper-row">
-      <form class="form-inline" @submit.prevent="draw">
+      <form class="form-inline" @submit.prevent="generateAndSolveMaze">
         <div class="row">
           <div class="col">
             <div class="form-group">
@@ -55,8 +55,8 @@
           </div>
         </div>
         <div class="col-auto my-1">
-          <button type="submit" class="btn btn-primary" :disabled="drawing">
-            {{ drawing ? "Waiting for solution..." : "Update Maze" }}
+          <button type="submit" class="btn btn-primary">
+            {{ drawing ? "Click to Finish" : "Create New Maze" }}
           </button>
         </div>
       </form>
@@ -86,17 +86,21 @@ export default defineComponent({
       graphics: null as Graphics | null,
 
       drawing: false as boolean,
+      quick: null as [boolean, boolean] | null,
+
+      mazeAnimation: true as boolean,
+      solverAnimation: true as boolean,
 
       rowCount: 12 as number,
       columnCount: 16 as number,
     };
   },
   mounted() {
-    this.init();
-    this.draw();
+    this.initializeGraphics();
+    this.generateAndSolveMaze();
   },
   methods: {
-    init() {
+    initializeGraphics() {
       const element = this.$refs.maze as Element;
       if (!element) return;
 
@@ -105,29 +109,52 @@ export default defineComponent({
         element.appendChild(this.graphics.application.view);
       }
     },
-    clear() {
+    clearGraphics() {
       if (this.graphics) {
         this.graphics.clear();
       }
     },
-    async draw() {
-      if (this.drawing) return;
-      this.drawing = true;
-      this.clear();
+    async generateAndSolveMaze() {
+      if (this.drawing) {
+        this.quick = [
+          this.animation.mazeAnimation,
+          this.animation.solverAnimation,
+        ];
+        this.animation.mazeAnimation = false;
+        this.animation.solverAnimation = false;
+      } else {
+        this.drawing = true;
+        this.clearGraphics();
 
-      let maze = new Maze(
-        this.rowCount,
-        this.columnCount,
-        this.vs,
-        this.graphics as Graphics
-      );
-      await maze.generateCells(this.animation);
-      await maze.breakEntranceAndExit();
-      await maze.breakWalls();
-      await maze.resetVisited();
-      await maze.solve();
+        let maze = new Maze(
+          this.rowCount,
+          this.columnCount,
+          this.vs,
+          this.graphics as Graphics
+        );
+        await maze.generateCells(this.animation);
+        await maze.breakEntranceAndExit();
+        await maze.breakWalls();
+        await maze.resetVisited();
+        await maze.solve();
 
-      this.drawing = false;
+        this.drawing = false;
+      }
+    },
+  },
+  watch: {
+    mazeAnimation() {
+      this.animation.mazeAnimation = this.mazeAnimation;
+    },
+    solverAnimation() {
+      this.animation.solverAnimation = this.solverAnimation;
+    },
+    drawing() {
+      if (this.quick && this.drawing == false) {
+        this.animation.mazeAnimation = this.quick[0];
+        this.animation.solverAnimation = this.quick[1];
+        this.quick = null;
+      }
     },
   },
 });
