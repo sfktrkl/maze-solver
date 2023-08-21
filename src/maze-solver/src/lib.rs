@@ -132,6 +132,13 @@ impl MazeSolver {
         while let Some((path, i, j)) = stack.pop() {
             if let Some(cell) = &self.cells_js[i][j] {
                 cell.set_visited(true);
+                let mut animate = true;
+                if let Some(prev_cell) = &path.last().unwrap() {
+                    if let Some(settings) = &self.animation_settings {
+                        animate = settings.get_solver_animation();
+                    }
+                    prev_cell.draw_move(cell, false, animate).await;
+                }
 
                 if i == row_count - 1 && j == column_count - 1 {
                     let mut current = cell;
@@ -162,12 +169,6 @@ impl MazeSolver {
                                 let mut new_path = path.clone();
                                 new_path.push(&self.cells_js[i][j]);
                                 stack.push((new_path, next_i, next_j));
-
-                                let mut animate = true;
-                                if let Some(settings) = &self.animation_settings {
-                                    animate = settings.get_solver_animation();
-                                }
-                                cell.draw_move(next_cell, false, animate).await;
                             }
                         }
                     }
