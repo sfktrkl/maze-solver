@@ -35,12 +35,17 @@ export class Line {
 }
 
 export class Graphics {
-  private vs: ViewSettings;
-  get viewSettings(): ViewSettings {
-    return this.vs;
-  }
-  set viewSettings(settings: ViewSettings) {
-    this.vs = settings;
+  constructor(public viewSettings: ViewSettings) {
+    this.app = new PIXI.Application({
+      width: viewSettings.width,
+      height: viewSettings.height,
+      antialias: true,
+      backgroundColor: viewSettings.backgroundColor,
+      resolution: window.devicePixelRatio || 1,
+    });
+
+    this.root = new PIXI.Container();
+    this.app.stage.addChild(this.root);
   }
 
   private app: PIXI.Application;
@@ -53,20 +58,6 @@ export class Graphics {
     return this.root;
   }
 
-  constructor(vs: ViewSettings) {
-    this.vs = vs;
-    this.app = new PIXI.Application({
-      width: vs.width,
-      height: vs.height,
-      antialias: true,
-      backgroundColor: vs.backgroundColor,
-      resolution: window.devicePixelRatio || 1,
-    });
-
-    this.root = new PIXI.Container();
-    this.app.stage.addChild(this.root);
-  }
-
   clear(): void {
     this.app.stage.removeChild(this.root);
     this.root = new PIXI.Container();
@@ -74,6 +65,6 @@ export class Graphics {
   }
 
   drawLine(line: Line): void {
-    line.draw(this.vs, this.root);
+    line.draw(this.viewSettings, this.root);
   }
 }

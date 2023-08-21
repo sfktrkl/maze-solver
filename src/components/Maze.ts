@@ -10,7 +10,7 @@ export class Maze {
     private rowCount: number,
     private columnCount: number,
     public vs: ViewSettings,
-    public graphics: Graphics | null
+    public graphics: Graphics
   ) {
     this.cells = [];
     this.solver = new MazeSolver(
@@ -22,7 +22,6 @@ export class Maze {
   }
 
   public async generateCells(animation: AnimationSettings): Promise<void> {
-    if (!this.graphics) return;
     this.solver.set_animation_settings(animation);
     for (let i = 0; i < this.rowCount; i++) {
       const cells: Cell[] = [];
@@ -43,22 +42,18 @@ export class Maze {
   }
 
   public async breakEntranceAndExit(): Promise<void> {
-    if (!this.graphics) return;
     await this.solver.break_entrance_and_exit();
   }
 
   public async breakWalls(): Promise<void> {
-    if (!this.graphics) return;
     await this.solver.break_walls();
   }
 
   public async resetVisited(): Promise<void> {
-    if (!this.graphics) return;
     this.solver.reset_visited();
   }
 
   public async solve(): Promise<void> {
-    if (!this.graphics) return;
     await this.solver.solve();
   }
 }
