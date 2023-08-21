@@ -7,6 +7,15 @@
         :style="{ width: `${vs.width}px`, height: `${vs.height}px` }"
       >
         <div ref="maze" class="mazeGraphics"></div>
+        <div class="form-check">
+          <label for="animation">Enable Animation</label>
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="animation"
+            v-model="vs.animate"
+          />
+        </div>
       </div>
     </div>
 
@@ -59,6 +68,7 @@ export default defineComponent({
       vs: {
         height: 600,
         width: 800,
+        animate: true,
         lineWidth: 2,
         lineColor: 0x000000,
         backgroundColor: 0xffffff,

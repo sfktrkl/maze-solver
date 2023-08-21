@@ -80,7 +80,8 @@ export class Cell {
     this.graphics.drawLine(line);
 
     this.graphics.viewSettings.lineColor = originalColor;
-    return new Promise((resolve) => setTimeout(resolve, 10));
+    if (this.graphics.viewSettings.animate)
+      return new Promise((resolve) => setTimeout(resolve, 10));
   }
 
   async drawMove(to: Cell, undo: boolean): Promise<void> {
@@ -113,6 +114,7 @@ export class Cell {
     if (line) this.graphics.drawLine(line);
     if (line2) this.graphics.drawLine(line2);
     this.graphics.viewSettings.lineColor = originalColor;
-    return new Promise((resolve) => setTimeout(resolve, 50));
+    if (this.graphics.viewSettings.animate)
+      return new Promise((resolve) => setTimeout(resolve, 50));
   }
 }

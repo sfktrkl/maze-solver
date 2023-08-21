@@ -3,6 +3,7 @@ import * as PIXI from "pixi.js";
 export interface ViewSettings {
   width: number;
   height: number;
+  animate: boolean;
   lineWidth: number;
   lineColor: number;
   backgroundColor: number;
