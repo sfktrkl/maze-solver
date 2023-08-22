@@ -121,12 +121,10 @@ export default defineComponent({
           this.rowCount,
           this.columnCount,
           this.vs,
+          this.animation,
           this.graphics as Graphics
         );
-        await maze.generateCells(this.animation);
-        await maze.breakEntranceAndExit();
-        await maze.breakWalls();
-        await maze.resetVisited();
+        await maze.generate();
         await maze.solve();
 
         this.drawing = false;

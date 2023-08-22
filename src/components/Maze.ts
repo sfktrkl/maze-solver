@@ -10,6 +10,7 @@ export class Maze {
     private rowCount: number,
     private columnCount: number,
     public vs: ViewSettings,
+    public animation: AnimationSettings,
     public graphics: Graphics
   ) {
     this.cells = [];
@@ -19,10 +20,10 @@ export class Maze {
       this.rowCount,
       this.columnCount
     );
+    this.solver.set_animation_settings(animation);
   }
 
-  public async generateCells(animation: AnimationSettings): Promise<void> {
-    this.solver.set_animation_settings(animation);
+  public async generate(): Promise<void> {
     for (let i = 0; i < this.rowCount; i++) {
       const cells: Cell[] = [];
       for (let j = 0; j < this.columnCount; j++) {
@@ -33,24 +34,14 @@ export class Maze {
           this.solver.get_cell(i, j, 3),
           this.graphics
         );
-        await cell.draw(animation.mazeAnimation);
+        await cell.draw(this.animation.mazeAnimation);
         cells.push(cell);
         this.solver.set_cell(i, j, cell);
       }
       this.cells.push(cells);
     }
-  }
-
-  public async breakEntranceAndExit(): Promise<void> {
     await this.solver.break_entrance_and_exit();
-  }
-
-  public async breakWalls(): Promise<void> {
     await this.solver.break_walls();
-  }
-
-  public async resetVisited(): Promise<void> {
-    this.solver.reset_visited();
   }
 
   public async solve(): Promise<void> {

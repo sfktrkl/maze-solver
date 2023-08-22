@@ -191,12 +191,7 @@ impl MazeSolver {
                 }
             }
         }
-    }
 
-    #[wasm_bindgen]
-    pub fn reset_visited(&mut self) {
-        let row_count = self.cells_js.len();
-        let column_count = self.cells_js[0].len();
         for i in 0..row_count {
             for j in 0..column_count {
                 if let Some(cell) = &self.cells_js[i][j] {
