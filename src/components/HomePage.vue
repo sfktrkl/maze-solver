@@ -4,7 +4,7 @@
       <div class="title">Maze Solver</div>
       <div
         class="graphics"
-        :style="{ width: `${vs.width}px`, height: `${vs.height}px` }"
+        :style="{ width: `${size * 8}px`, height: `${size * 6}px` }"
       >
         <div ref="maze" class="mazeGraphics"></div>
       </div>
@@ -98,13 +98,29 @@ export default defineComponent({
       columnCount: 16 as number,
     };
   },
-  mounted() {
-    const element = this.$refs.maze as Element;
-    element.appendChild(this.graphics.application.view);
-
-    this.generateAndSolveMaze();
+  async mounted() {
+    this.updateGraphics();
+    await this.generateAndSolveMaze();
+  },
+  computed: {
+    size() {
+      const width = (window.innerWidth * 2) / 3;
+      const height = (window.innerHeight * 2) / 3;
+      return Math.min(height / 6, width / 8);
+    },
   },
   methods: {
+    updateGraphics() {
+      const element = this.$refs.maze as Element;
+      if (element.childNodes.length > 0)
+        element.removeChild(this.graphics.application.view);
+
+      this.vs.height = this.size * 6;
+      this.vs.width = this.size * 8;
+      this.graphics.update(this.vs);
+      element.appendChild(this.graphics.application.view);
+      return;
+    },
     async generateAndSolveMaze() {
       if (this.drawing) {
         this.quick = [

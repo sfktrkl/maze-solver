@@ -64,6 +64,18 @@ export class Graphics {
     this.app.stage.addChild(this.root);
   }
 
+  update(viewSettings: ViewSettings) {
+    this.viewSettings = viewSettings;
+    this.app = new PIXI.Application({
+      width: viewSettings.width,
+      height: viewSettings.height,
+      antialias: true,
+      backgroundColor: viewSettings.backgroundColor,
+      resolution: window.devicePixelRatio || 1,
+    });
+    this.app.stage.addChild(this.root);
+  }
+
   drawLine(line: Line): void {
     line.draw(this.viewSettings, this.root);
   }
