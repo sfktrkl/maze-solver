@@ -30,8 +30,8 @@
 
     <div class="wrapper-row">
       <form class="form-inline" @submit.prevent="generateAndSolveMaze">
-        <div class="row">
-          <div class="col">
+        <div class="row justify-content-center text-center">
+          <div class="col-5">
             <div class="form-group">
               <label for="row">Maze row count</label>
               <input
@@ -43,7 +43,7 @@
               />
             </div>
           </div>
-          <div class="col">
+          <div class="col-5">
             <label for="column">Maze column count</label>
             <input
               class="form-control"
@@ -54,10 +54,12 @@
             />
           </div>
         </div>
-        <div class="col text-center my-2">
-          <button type="submit" class="btn btn-primary">
-            {{ drawing ? "Click to Finish" : "Create New Maze" }}
-          </button>
+        <div class="row justify-content-center">
+          <div class="row col-5 my-2">
+            <button type="submit" class="btn btn-primary">
+              {{ drawing ? "Click to Finish" : "Create New Maze" }}
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -168,7 +170,6 @@ export default defineComponent({
 <style scoped>
 .wrapper {
   display: flex;
-  height: 100vh;
   flex-direction: column;
   justify-content: center;
 }
