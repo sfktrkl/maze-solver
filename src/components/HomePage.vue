@@ -1,69 +1,64 @@
 <template>
-  <div class="wrapper">
-    <div class="wrapper-row">
-      <div class="title">Maze Solver</div>
-      <div
-        class="graphics"
-        :style="{ width: `${size * 8}px`, height: `${size * 6}px` }"
-      >
-        <div ref="maze" class="mazeGraphics"></div>
-      </div>
-      <div class="form-check col">
-        <label for="mazeAnimation">Maze Generation Animation</label>
-        <input
-          class="form-check-input"
-          type="checkbox"
-          id="mazeAnimation"
-          v-model="mazeAnimation"
-        />
-      </div>
-      <div class="form-check col">
-        <label for="solutionAnimation">Solution Animation</label>
-        <input
-          class="form-check-input"
-          type="checkbox"
-          id="solutionAnimation"
-          v-model="solverAnimation"
-        />
-      </div>
+  <div class="row justify-content-center text-center">
+    <div class="title">Maze Solver</div>
+    <div class="graphics">
+      <div ref="maze" class="mazeGraphics"></div>
     </div>
-
-    <div class="wrapper-row">
-      <form class="form-inline" @submit.prevent="generateAndSolveMaze">
-        <div class="row justify-content-center text-center">
-          <div class="col-5">
-            <div class="form-group">
-              <label for="row">Maze row count</label>
-              <input
-                class="form-control"
-                type="number"
-                id="row"
-                min="2"
-                v-model="rowCount"
-              />
-            </div>
-          </div>
-          <div class="col-5">
-            <label for="column">Maze column count</label>
-            <input
-              class="form-control"
-              type="number"
-              id="column"
-              min="2"
-              v-model="columnCount"
-            />
-          </div>
-        </div>
-        <div class="row justify-content-center">
-          <div class="row col-5 my-2">
-            <button type="submit" class="btn btn-primary">
-              {{ drawing ? "Click to Finish" : "Create New Maze" }}
-            </button>
-          </div>
-        </div>
-      </form>
+    <div class="title">Animation Settings</div>
+    <div class="form-check col-2">
+      <label for="mazeAnimation">Maze Generation Animation</label>
+      <input
+        class="form-check-input"
+        type="checkbox"
+        id="mazeAnimation"
+        v-model="mazeAnimation"
+      />
+    </div>
+    <div class="form-check col-2">
+      <label for="solutionAnimation">Solution Animation</label>
+      <input
+        class="form-check-input"
+        type="checkbox"
+        id="solutionAnimation"
+        v-model="solverAnimation"
+      />
     </div>
   </div>
+
+  <form class="form-inline" @submit.prevent="generateAndSolveMaze">
+    <div class="row justify-content-center text-center">
+      <div class="title">Maze Settings</div>
+      <div class="col-2">
+        <div class="form-group">
+          <label for="row">Maze row count</label>
+          <input
+            class="form-control"
+            type="number"
+            id="row"
+            min="2"
+            v-model="rowCount"
+          />
+        </div>
+      </div>
+      <div class="col-2">
+        <label for="column">Maze column count</label>
+        <input
+          class="form-control"
+          type="number"
+          id="column"
+          min="2"
+          v-model="columnCount"
+        />
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="row col-2 my-2">
+        <button type="submit" class="btn btn-primary">
+          {{ drawing ? "Click to Finish" : "Create New Maze" }}
+        </button>
+      </div>
+    </div>
+  </form>
 </template>
 
 <script lang="ts">
@@ -90,6 +85,9 @@ export default defineComponent({
       graphics,
       animation,
 
+      initialSize: null as number | null,
+      resizeObserver: null as ResizeObserver | null,
+
       drawing: false as boolean,
       quick: null as [boolean, boolean] | null,
 
@@ -104,6 +102,11 @@ export default defineComponent({
     this.updateGraphics();
     await this.generateAndSolveMaze();
   },
+  beforeUnmount() {
+    const element = this.$refs.maze as Element;
+    if (this.resizeObserver && this.$refs.maze)
+      this.resizeObserver.unobserve(element);
+  },
   computed: {
     size() {
       const width = (window.innerWidth * 2) / 3;
@@ -114,13 +117,26 @@ export default defineComponent({
   methods: {
     updateGraphics() {
       const element = this.$refs.maze as Element;
-      if (element.childNodes.length > 0)
-        element.removeChild(this.graphics.application.view);
 
       this.vs.height = this.size * 6;
       this.vs.width = this.size * 8;
       this.graphics.update(this.vs);
       element.appendChild(this.graphics.application.view);
+
+      this.initialSize = element.clientWidth;
+      this.resizeObserver = new ResizeObserver(() => {
+        requestAnimationFrame(() => {
+          const scale = () => {
+            const size = element.clientWidth;
+            return this.initialSize ? size / this.initialSize : 1.0;
+          };
+          this.graphics.application.renderer.view.style.width =
+            this.graphics.application.renderer.width * scale() + "px";
+          this.graphics.application.renderer.view.style.height =
+            this.graphics.application.renderer.height * scale() + "px";
+        });
+      });
+      this.resizeObserver.observe(element);
       return;
     },
     async generateAndSolveMaze() {
@@ -174,14 +190,8 @@ export default defineComponent({
   justify-content: center;
 }
 
-.wrapper-row {
-  height: 100%;
-  margin: auto;
-  padding-top: 1em;
-}
-
 .title {
-  text-align: center;
-  padding-bottom: 1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
 }
 </style>
