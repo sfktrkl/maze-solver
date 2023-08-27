@@ -6,26 +6,26 @@
     </div>
     <div class="col-8 col-sm-7 col-md-4 col-lg-3 col-xl-2">
       <div class="form-check">
-      <label for="mazeAnimation">Maze Generation Animation</label>
-      <input
-        class="form-check-input"
-        type="checkbox"
-        id="mazeAnimation"
-        v-model="mazeAnimation"
-      />
-    </div>
+        <label for="mazeAnimation">Maze Generation Animation</label>
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="mazeAnimation"
+          v-model="mazeAnimation"
+        />
+      </div>
     </div>
     <div class="col-8 col-sm-7 col-md-4 col-lg-3 col-xl-2">
       <div class="form-check">
-      <label for="solutionAnimation">Solution Animation</label>
-      <input
-        class="form-check-input"
-        type="checkbox"
-        id="solutionAnimation"
-        v-model="solverAnimation"
-      />
+        <label for="solutionAnimation">Solution Animation</label>
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="solutionAnimation"
+          v-model="solverAnimation"
+        />
+      </div>
     </div>
-  </div>
   </div>
 
   <form class="form-inline" @submit.prevent="generateAndSolveMaze">
@@ -44,16 +44,16 @@
       </div>
       <div class="row col-8 col-sm-7 col-md-4 col-lg-3 col-xl-2">
         <div class="form-group">
-        <label for="column">Maze column count</label>
-        <input
-          class="form-control"
-          type="number"
-          id="column"
-          min="2"
-          v-model="columnCount"
-        />
+          <label for="column">Maze column count</label>
+          <input
+            class="form-control"
+            type="number"
+            id="column"
+            min="2"
+            v-model="columnCount"
+          />
+        </div>
       </div>
-    </div>
     </div>
     <div class="row justify-content-center">
       <div class="row col-7 col-sm-6 col-md-3 col-lg-3 col-xl-2">
@@ -89,7 +89,6 @@ export default defineComponent({
       graphics,
       animation,
 
-      initialSize: null as number | null,
       resizeObserver: null as ResizeObserver | null,
 
       drawing: false as boolean,
@@ -127,17 +126,12 @@ export default defineComponent({
       this.graphics.update(this.vs);
       element.appendChild(this.graphics.application.view);
 
-      this.initialSize = element.clientWidth;
       this.resizeObserver = new ResizeObserver(() => {
         requestAnimationFrame(() => {
-          const scale = () => {
-            const size = element.clientWidth;
-            return this.initialSize ? size / this.initialSize : 1.0;
-          };
           this.graphics.application.renderer.view.style.width =
-            this.graphics.application.renderer.width * scale() + "px";
+            (element.clientWidth * 2) / 3 + "px";
           this.graphics.application.renderer.view.style.height =
-            this.graphics.application.renderer.height * scale() + "px";
+            ((element.clientWidth * 2) / 3 / 8) * 6 + "px";
         });
       });
       this.resizeObserver.observe(element);
