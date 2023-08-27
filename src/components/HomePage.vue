@@ -4,8 +4,8 @@
     <div class="graphics">
       <div ref="maze" class="mazeGraphics"></div>
     </div>
-    <div class="title">Animation Settings</div>
-    <div class="form-check col-2">
+    <div class="col-8 col-sm-7 col-md-4 col-lg-3 col-xl-2">
+      <div class="form-check">
       <label for="mazeAnimation">Maze Generation Animation</label>
       <input
         class="form-check-input"
@@ -14,7 +14,9 @@
         v-model="mazeAnimation"
       />
     </div>
-    <div class="form-check col-2">
+    </div>
+    <div class="col-8 col-sm-7 col-md-4 col-lg-3 col-xl-2">
+      <div class="form-check">
       <label for="solutionAnimation">Solution Animation</label>
       <input
         class="form-check-input"
@@ -24,11 +26,11 @@
       />
     </div>
   </div>
+  </div>
 
   <form class="form-inline" @submit.prevent="generateAndSolveMaze">
-    <div class="row justify-content-center text-center">
-      <div class="title">Maze Settings</div>
-      <div class="col-2">
+    <div class="row justify-content-center text-center my-4">
+      <div class="row col-8 col-sm-7 col-md-4 col-lg-3 col-xl-2">
         <div class="form-group">
           <label for="row">Maze row count</label>
           <input
@@ -40,7 +42,8 @@
           />
         </div>
       </div>
-      <div class="col-2">
+      <div class="row col-8 col-sm-7 col-md-4 col-lg-3 col-xl-2">
+        <div class="form-group">
         <label for="column">Maze column count</label>
         <input
           class="form-control"
@@ -51,8 +54,9 @@
         />
       </div>
     </div>
+    </div>
     <div class="row justify-content-center">
-      <div class="row col-2 my-2">
+      <div class="row col-7 col-sm-6 col-md-3 col-lg-3 col-xl-2">
         <button type="submit" class="btn btn-primary">
           {{ drawing ? "Click to Finish" : "Create New Maze" }}
         </button>
